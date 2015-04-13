@@ -160,9 +160,9 @@ class Game
 end
 
 
-skip_train = false
+skip_train = true
 while true
 	game = Game.new()
-	game.run(skip_train,2)
+	game.run(skip_train,5)
 	skip_train = true
 end
