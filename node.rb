@@ -22,7 +22,13 @@ class Node
     @regret_sum
   end
 
-  def set_all_regret_sum(data)
+  def set_all_regret_sum(context,data)
+#     if @regret_sum.has_key?(context)
+#         sub_regret_sum = @regret_sum[context]
+#     else
+#         sub_regret_sum = {}
+#         @regret_sum[contect] = sub_regret_sum
+#     end
      data.tr!("{}","")
      data.split(",").each do |line|
        key,value = line.split("=>")
@@ -30,6 +36,7 @@ class Node
        value = value.to_f
        @regret_sum[key] = value
      end
+
   end
 
   def get_regret_sum(action)

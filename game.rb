@@ -1,18 +1,31 @@
 require './human_player'
 require './csr_player'
+require './boar_player'
 require './trainer'
 
 class Game
+  @csr_win_count = 0
   @@INITIAL_DICE_NUM = 2
   @@RANK_MAX = 6
   @@dice_history = []
   @@done = false
+
+    
+  def initialize
+      @csr_win_count = 0
+  end
+    
   def self.INITIAL_DICE_NUM
     @@INITIAL_DICE_NUM
   end
   def self.RANK_MAX
     @@RANK_MAX
   end
+    
+  def csr_win_count
+      @csr_win_count
+  end
+    
   def create_dice_set(num)
     dice = ""
     for i in 0..(num - 1)
@@ -96,6 +109,9 @@ class Game
         print "player " + i.to_s + " has " + player_dice_nums[i].to_s + " dices\n"
         if player_dice_nums[i] <= 0
           print "player " + i.to_s + " has lost\n"
+#          if i == 0 
+#              @csr_win_count += 1
+#          end
         end
       end
 #    puts @@dice_history
@@ -125,7 +141,7 @@ class Game
           next_hand = ""
           loop do
             puts "[" + players[i].class.to_s  + "] [" + history + "] input value>"
-            next_hand = players[i].get_action(history)
+            next_hand = players[i].get_action(history,player_dice_nums)
             puts "[" + players[i].class.to_s  + "] [" + history + "] :" + next_hand 
             break if valid(next_hand,history,total_dice)
             puts "wrong value,input again>"
@@ -157,12 +173,15 @@ class Game
     show_result(player_dice_nums)
     puts "game done"
   end
+    
 end
 
 
 skip_train = true
-while true
-	game = Game.new()
-	game.run(skip_train,5)
+game = Game.new()
+1000.times do
+	game.run(skip_train,200)
 	skip_train = true
 end
+
+#puts game.csr_win_count

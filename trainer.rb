@@ -50,12 +50,20 @@ class Trainer
     end
 	
 	puts "computed"
-	data_to_be_recode = ""
-	@histories.each do |k,v|
-	    data_to_be_recode << (k+"*"+v.get_all_regret_sum.to_s+"#")
+	data_to_be_recoded = ""
+	@histories.each do |context,sub|
+        data_to_be_recoded << "["
+        data_to_be_recoded << context
+        data_to_be_recoded << "]#"
+        sub.each do |k,v|
+            data_to_be_recoded << k
+            data_to_be_recoded << "*"
+            data_to_be_recoded << v.get_all_regret_sum.to_s
+            data_to_be_recoded << "#"
+        end
 	end
 	    
-	compressed_data = Zlib::Deflate.deflate(data_to_be_recode)
+	compressed_data = Zlib::Deflate.deflate(data_to_be_recoded)
 	File.binwrite("./train_data.dat",compressed_data)
 	puts "trained"
 	
@@ -93,7 +101,8 @@ class Trainer
         player2_dice = @game.create_dice_set(num_player2)
 
         max = num_player1 + num_player2
-        return self.csr(1,1,player1_dice,player2_dice,max,false,history + "r" + (round+1).to_s,true,round+1,stack+1)
+#        return self.csr(1,1,player1_dice,player2_dice,max,false,history + "r" + (round+1).to_s,true,round+1,stack+1)
+        return self.csr(1,1,player1_dice,player2_dice,max,false,"",true,round+1,stack+1)
      end
     else
       util = 0
@@ -117,18 +126,30 @@ class Trainer
 
         end
       end
-      store_regret(history,points,util)
+      store_regret([player1_dice,player2_dice],history,points,util)
       return util
    end
   end
 
-  def store_regret(history,points,utility)
+  def store_regret(players_dice,history,points,utility)
     node = ""
-    if @histories.has_key?(history)
-      node = @histories[history]
+    context = ""
+    players_dice.each do |v|
+        context += v.length.to_s
+    end
+      
+    if @histories.has_key?(context)
+        sub_histories = @histories[context]
     else
-      node = Node.new()
-      @histories[history] = node
+        sub_histories = {}
+        @histories[context] = sub_histories
+    end
+    
+    if sub_histories.has_key?(history)
+        node = sub_histories[history]
+    else
+        node = Node.new()
+        sub_histories[history] = node
     end
 
     points.each do |point,action|

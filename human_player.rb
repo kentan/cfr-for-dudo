@@ -1,5 +1,5 @@
 class HumanPlayer
-  def get_action(history)
+  def get_action(history,player_dice_nums)
     count = 2
     num = ""
     ARGF.each do |line|
