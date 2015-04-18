@@ -1,6 +1,6 @@
 require 'yaml'
 require 'zlib'
-
+require './dao'
 
 class CSRPlayer
   @@loaded = false
@@ -15,7 +15,7 @@ class CSRPlayer
     count = 0
     compressed = ""
     
-    compressed = File.binread("./train_data.dat")
+    compressed = Dao.new.read_from_file()
 
     
     decompressed_data = Zlib::Inflate.inflate(compressed)

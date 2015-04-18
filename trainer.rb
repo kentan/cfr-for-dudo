@@ -1,4 +1,5 @@
 require './node'
+require './dao'
 require 'yaml'
 require 'zlib'
 
@@ -50,22 +51,7 @@ class Trainer
     end
 	
 	puts "computed"
-	data_to_be_recoded = ""
-	@histories.each do |context,sub|
-        data_to_be_recoded << "["
-        data_to_be_recoded << context
-        data_to_be_recoded << "]#"
-        sub.each do |k,v|
-            data_to_be_recoded << k
-            data_to_be_recoded << "*"
-            data_to_be_recoded << v.get_all_regret_sum.to_s
-            data_to_be_recoded << "#"
-        end
-	end
-	    
-	compressed_data = Zlib::Deflate.deflate(data_to_be_recoded)
-	File.binwrite("./train_data.dat",compressed_data)
-	puts "trained"
+    Dao.new.write_to_file(@histories)
 	
   end
 
